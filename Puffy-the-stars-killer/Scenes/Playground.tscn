@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dv7g5s5t30kna"]
+
+[ext_resource type="PackedScene" uid="uid://6kk73wuewyxb" path="res://Entities/PuffyTheStarsKiller.tscn" id="1_3lgjl"]
+
+[node name="Playground" type="Node2D"]
+
+[node name="PuffyTheStarsKiller" parent="." instance=ExtResource("1_3lgjl")]
+position = Vector2(456, 297)
