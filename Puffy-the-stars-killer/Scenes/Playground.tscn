@@ -1,8 +1,23 @@
-[gd_scene load_steps=2 format=3 uid="uid://dv7g5s5t30kna"]
+[gd_scene load_steps=4 format=3 uid="uid://dv7g5s5t30kna"]
 
 [ext_resource type="PackedScene" uid="uid://6kk73wuewyxb" path="res://Entities/PuffyTheStarsKiller.tscn" id="1_3lgjl"]
+[ext_resource type="Texture2D" uid="uid://b3aqyd8hudsh8" path="res://Assets/Env/GroundKKKK.png" id="2_bu1la"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o3j4x"]
+size = Vector2(32, 32)
 
 [node name="Playground" type="Node2D"]
 
 [node name="PuffyTheStarsKiller" parent="." instance=ExtResource("1_3lgjl")]
 position = Vector2(456, 297)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(406, 431)
+scale = Vector2(20, 1)
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D"]
+texture = ExtResource("2_bu1la")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_o3j4x")

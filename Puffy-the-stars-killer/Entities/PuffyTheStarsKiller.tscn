@@ -1,20 +1,20 @@
 [gd_scene load_steps=4 format=3 uid="uid://6kk73wuewyxb"]
 
 [ext_resource type="Script" path="res://Scripts/PuffyTheStarsKiller.gd" id="1_f2e46"]
-[ext_resource type="Texture2D" uid="uid://bqurcf75xn6d1" path="res://icon.svg" id="1_loa3s"]
+[ext_resource type="Texture2D" uid="uid://cb3axaar87qcu" path="res://Assets/PuffyTheStarsKiller/PuffyTheStarsKillerPlaceholder.png" id="2_uoeet"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_twtmc"]
-size = Vector2(124, 121)
+size = Vector2(32, 32)
 
 [node name="PuffyTheStarsKiller" type="Node2D"]
-script = ExtResource("1_f2e46")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+script = ExtResource("1_f2e46")
 
 [node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
 position = Vector2(0, 4)
-texture = ExtResource("1_loa3s")
+texture = ExtResource("2_uoeet")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
-position = Vector2(0, 3.5)
+position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_twtmc")
