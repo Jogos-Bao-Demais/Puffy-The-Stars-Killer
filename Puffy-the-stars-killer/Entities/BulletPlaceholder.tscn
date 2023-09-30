@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://c55y035jhnv8h"]
+
+[ext_resource type="Script" path="res://Entities/BulletPlaceholder.gd" id="1_sto02"]
+[ext_resource type="Texture2D" uid="uid://cwd34naxdda0a" path="res://Assets/Projectiles/ProjectilePlaceholder.png" id="1_ttiey"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_txc76"]
+radius = 7.0
+
+[node name="BulletPlaceholder" type="RigidBody2D"]
+script = ExtResource("1_sto02")
+
+[node name="ProjectilePlaceholder" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_ttiey")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_txc76")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
