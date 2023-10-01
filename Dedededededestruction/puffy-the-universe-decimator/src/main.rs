@@ -1,3 +1,10 @@
+/// @author Gabriel Spinola - gabr
+/// 
+/// References:
+/// LINK - https://bevy-cheatbook.github.io
+/// LINK - https://sburris.xyz/posts/bevy-gravity/
+/// LINK - https://www.youtube.com/watch?v=4TjEo-gDgAg&t=417s
+
 use bevy::{prelude::*, window::PrimaryWindow};
 use rand::random;
 
@@ -197,14 +204,14 @@ pub fn confine_enemy(
     mut enemy_query: Query<&mut Transform, With<Enemy>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
-    let window = window_query.get_single().unwrap();
+    let window: &Window = window_query.get_single().unwrap();
 
-    let half_player_size = PLAYER_SPRITE_SIZE / 2.0;
+    let half_player_size: f32 = PLAYER_SPRITE_SIZE / 2.0;
 
-    let x_min = 0.0 + half_player_size;
-    let x_max = window.width() - half_player_size;
-    let y_min = 0.0 + half_player_size;
-    let y_max = window.height() - half_player_size;
+    let x_min: f32 = 0.0 + half_player_size;
+    let x_max: f32 = window.width() - half_player_size;
+    let y_min: f32 = 0.0 + half_player_size;
+    let y_max: f32 = window.height() - half_player_size;
 
     for mut transform in enemy_query.iter_mut() {
         let mut translation = transform.translation;
@@ -227,19 +234,41 @@ pub fn confine_enemy(
     }
 }
 
+pub fn enemy_hit_player(
+    mut commands: Commands,
+    mut player_query: Query<(Entity, &Transform), With<Player>>, // entity's a u32 so we can clone it
+    enemy_query: Query<&Transform, With<Enemy>>
+) {
+    if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
+        for enemy_transform in enemy_query.iter() {
+            let distance = player_transform.translation.distance(enemy_transform.translation);
+
+            let player_radius = PLAYER_SPRITE_SIZE / 2.0;
+            let enemy_radius = ENEMY_SPRITE_SIZE / 2.0;
+
+            // if the distance between two entities is minor than the sum of their radiuses
+            // they're colliding
+            if distance < player_radius + enemy_radius {
+                commands.entity(player_entity).despawn();
+            }
+        }
+    }
+}
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, (
             spawn_camera,
             spawn_player,
-            spawn_enemies
+            spawn_enemies,
         ))
         .add_systems(Update, (
             player_movement,
             confine_player,
             enemy_movement,
             update_enemy_direction,
+            enemy_hit_player,
         ))
         .run()
 }
