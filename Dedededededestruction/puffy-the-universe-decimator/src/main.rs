@@ -4,7 +4,7 @@
 /// LINK - https://bevy-cheatbook.github.io
 /// LINK - https://sburris.xyz/posts/bevy-gravity/
 /// LINK - https://www.youtube.com/watch?v=4TjEo-gDgAg&t=417s
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{app::AppExit, prelude::*, window::PrimaryWindow};
 use rand::random;
 
 pub const PLAYER_SPEED: f32 = 500.0;
@@ -46,6 +46,11 @@ impl Default for StarSpawnTimerResource {
             timer: Timer::from_seconds(STAR_SPAWN_TIME, TimerMode::Repeating),
         }
     }
+}
+
+#[derive(Event)]
+pub struct GameOver {
+    pub score: u32,
 }
 
 pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
@@ -236,7 +241,9 @@ pub fn confine_enemy(
 pub fn enemy_hit_player(
     mut commands: Commands,
     mut player_query: Query<(Entity, &Transform), With<CPlayer>>, // entity's a u32 so we can clone it
+    mut game_over_event_write: EventWriter<GameOver>,
     enemy_query: Query<&Transform, With<CEnemy>>,
+    score: Res<ScoreResource>,
 ) {
     if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
         for enemy_transform in enemy_query.iter() {
@@ -251,6 +258,7 @@ pub fn enemy_hit_player(
             // they're colliding
             if distance < player_radius + enemy_radius {
                 commands.entity(player_entity).despawn();
+                game_over_event_write.send(GameOver { score: score.value });
             }
         }
     }
@@ -279,11 +287,28 @@ pub fn spawn_stars_over_time(
     }
 }
 
+// Events are used to send data between systems.
+pub fn exit_game(
+    mut app_exit_event_write: EventWriter<AppExit>,
+    keyboard_input: Res<Input<KeyCode>>,
+) {
+    if keyboard_input.just_pressed(KeyCode::Escape) {
+        app_exit_event_write.send(AppExit);
+    }
+}
+
+pub fn handle_game_over(mut game_over_event_reader: EventReader<GameOver>) {
+    for event in game_over_event_reader.iter() {
+        println!("Final score is: {}", event.score.to_string());
+    }
+}
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .init_resource::<ScoreResource>()
         .init_resource::<StarSpawnTimerResource>()
+        .add_event::<GameOver>()
         .add_systems(Startup, (spawn_camera, spawn_player, spawn_enemies))
         .add_systems(
             Update,
@@ -295,7 +320,9 @@ fn main() {
                 update_enemy_direction,
                 enemy_hit_player,
                 update_score,
-                spawn_stars_over_time
+                spawn_stars_over_time,
+                exit_game,
+                handle_game_over,
             ),
         )
         .run()
