@@ -197,16 +197,16 @@ pub fn confine_enemy(
     mut enemy_query: Query<&mut Transform, With<Enemy>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
-        let window = window_query.get_single().unwrap();
+    let window = window_query.get_single().unwrap();
 
-        let half_player_size = PLAYER_SPRITE_SIZE / 2.0;
+    let half_player_size = PLAYER_SPRITE_SIZE / 2.0;
 
-        let x_min = 0.0 + half_player_size;
-        let x_max = window.width() - half_player_size;
-        let y_min = 0.0 + half_player_size;
-        let y_max = window.height() - half_player_size;
+    let x_min = 0.0 + half_player_size;
+    let x_max = window.width() - half_player_size;
+    let y_min = 0.0 + half_player_size;
+    let y_max = window.height() - half_player_size;
 
-        for mut transform in enemy_query.iter_mut() {
+    for mut transform in enemy_query.iter_mut() {
         let mut translation = transform.translation;
 
         if translation.x < x_min {
