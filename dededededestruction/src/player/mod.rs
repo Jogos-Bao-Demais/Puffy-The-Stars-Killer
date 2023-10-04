@@ -1,3 +1,12 @@
+/// @author Gabriel Spinola - gabr
+///
+/// References:
+/// LINK - https://bevy-cheatbook.github.io
+/// LINK - https://sburris.xyz/posts/bevy-gravity/
+/// LINK - https://www.youtube.com/watch?v=4TjEo-gDgAg&t=417
+///
+/// LINK - CU: http://icts.unb.br/jspui/bitstream/10482/41315/1/2020_VicentedePaulaNascimentoLeiteFilho.pdf
+
 use bevy::prelude::*;
 
 pub mod components;
