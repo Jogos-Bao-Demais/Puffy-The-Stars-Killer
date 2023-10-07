@@ -1,6 +1,8 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 
 use crate::entities::components::{FrameTime, SpriteAnimation};
+use crate::entities::player::PuffyTheStarsKillerPlugin;
+use crate::entities::player::resources::{PuffyTheStarsKillerAnimations, PuffyTheStarsKillerAnimationsKeys};
 
 use super::{components::PuffyTheStarsKiller, PLAYER_SPEED, PLAYER_SPRITE_SIZE};
 
@@ -37,7 +39,71 @@ pub fn spawn_puffy_stars_killer(
   ));
 }
 
-pub fn confine_player(
+pub fn puffy_the_stars_killer_movement(
+  keyboard_input: Res<Input<KeyCode>>,
+  time: Res<Time>,
+  mut player_transform: Query<&mut Transform, With<PuffyTheStarsKiller>>,
+) {
+  // When we are not sure if our entity does'nt exist, we have to make sure that it's ok
+  if let Ok(mut transform) = player_transform.get_single_mut() {
+    if keyboard_input.any_pressed([KeyCode::Left, KeyCode::A]) {
+      transform.translation.x -= PLAYER_SPEED * time.delta_seconds();
+    }
+
+    if keyboard_input.any_pressed([KeyCode::Right, KeyCode::D])  {
+      transform.translation.x += PLAYER_SPEED * time.delta_seconds();
+    }
+
+    if keyboard_input.any_pressed([KeyCode::Down, KeyCode::S])  {
+      transform.translation.y -= PLAYER_SPEED * time.delta_seconds();
+    }
+
+    if keyboard_input.any_pressed([KeyCode::Up, KeyCode::W])  {
+      transform.translation.y += PLAYER_SPEED * time.delta_seconds();
+    }
+  }
+
+  return;
+}
+
+fn flip_puffy_the_stars_killer(mut flip: bool, move_keys: &[KeyCode; 4]) {
+  todo!();
+}
+
+pub fn change_puffy_the_stars_killer_animation(
+  mut player: Query<
+    (&mut Handle<TextureAtlasSprite>, &mut SpriteAnimation, &mut TextureAtlasSprite),
+    With<PuffyTheStarsKiller>
+  >,
+  mut texture_atlas: ResMut<Assets<TextureAtlas>>,
+  asset_server: Res<AssetServer>,
+  mut puffy_animation: ResMut<PuffyTheStarsKillerAnimations>,
+  input: Res<Input<KeyCode>>,
+) {
+  let movement_keys = [KeyCode::A, KeyCode::Left, KeyCode::D, KeyCode::Right];
+
+  if let Ok((mut atlas, mut animation, mut sprite)) = player.get_single_mut() {
+    if input.any_just_pressed(movement_keys) {
+
+      puffy_animation
+    }
+
+    if input.any_just_pressed(movement_keys[..=2]) {
+      sprite.flip_x = true;
+    }
+    else if input.any_just_pressed([3..=4]) {
+      sprite.flip_x = false;
+    }
+
+    if !input.any_just_released(movement_keys) && !input.any_pressed(movement_keys) {
+
+    }
+  }
+
+  return;
+}
+
+pub fn confine_puffy_the_stars_killer(
   mut player_query: Query<&mut Transform, With<PuffyTheStarsKiller>>,
   window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
@@ -66,25 +132,6 @@ pub fn confine_player(
     }
 
     transform.translation = translation
-  }
-
-  return;
-}
-
-pub fn player_movement(
-  keyboard_input: Res<Input<KeyCode>>,
-  time: Res<Time>,
-  mut player_transform: Query<&mut Transform, With<PuffyTheStarsKiller>>,
-) {
-  // When we are not sure if our entity does'nt exist, we have to make sure that it's ok
-  if let Ok(mut transform) = player_transform.get_single_mut() {
-    if keyboard_input.any_pressed([KeyCode::Left, KeyCode::A]) {
-			transform.translation.x += -PLAYER_SPEED * time.delta_seconds();
-		}
-
-    if keyboard_input.any_pressed([KeyCode::Right, KeyCode::D])  {
-      transform.translation.x += PLAYER_SPEED * time.delta_seconds();
-    }
   }
 
   return;
