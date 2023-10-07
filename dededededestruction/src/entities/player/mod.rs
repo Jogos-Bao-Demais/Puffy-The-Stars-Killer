@@ -17,12 +17,12 @@ use systems::*;
 pub const PLAYER_SPEED: f32 = 500.0;
 pub const PLAYER_SPRITE_SIZE: f32 = 32.0;
 
-pub struct PlayerPlugin;
+pub struct PuffyTheStarsKillerPlugin;
 
-impl Plugin for PlayerPlugin {
+impl Plugin for PuffyTheStarsKillerPlugin {
     fn build(&self, app: &mut App) {
       app
-        .add_systems(Startup, spawn_player)
+        .add_systems(Startup, spawn_puffy_stars_killer)
         .add_systems(Update, (
           player_movement,
           confine_player

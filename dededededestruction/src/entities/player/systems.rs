@@ -1,26 +1,43 @@
 use bevy::{prelude::*, window::PrimaryWindow};
+use crate::entities::components::{FrameTime, SpriteAnimation};
 
-use super::{components::CPlayer, PLAYER_SPRITE_SIZE, PLAYER_SPEED};
+use super::{components::PuffyTheStarsKiller, PLAYER_SPRITE_SIZE, PLAYER_SPEED};
 
-pub fn spawn_player(
+pub fn spawn_puffy_stars_killer(
   mut commands: Commands,
+  mut texture_atlas: ResMut<Assets<TextureAtlas>>,
   window_query: Query<&Window, With<PrimaryWindow>>,
   asset_server: Res<AssetServer>,
 ) {
   let window: &Window = window_query.get_single().unwrap();
 
+  let atlas = TextureAtlas::from_grid(
+    asset_server.load("temp/free/Main Characters/Virtual Guy/Idle (32x32).png"),
+    Vec2::splat(32.), // states that our texture is 32 by 32 size
+    11,
+    1,
+    None,
+    None
+  );
+
   commands.spawn((
-      SpriteBundle {
-          transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
-          texture: asset_server.load("sprites/PuffyTheStarsKillerPlaceholder.png"),
-          ..Default::default() // Set all other field to default
-      },
-      CPlayer {},
+    PuffyTheStarsKiller,
+    SpriteSheetBundle {
+      transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
+      texture_atlas: texture_atlas.add(atlas),
+      sprite: TextureAtlasSprite { index: 0, ..Default::default() },
+      ..Default::default() // Set all other field to default
+    },
+    SpriteAnimation {
+      len: 11,
+      frame_time: 1./20.
+    },
+    FrameTime(0.0)
   ));
 }
 
 pub fn confine_player(
-  mut player_query: Query<&mut Transform, With<CPlayer>>,
+  mut player_query: Query<&mut Transform, With<PuffyTheStarsKiller>>,
   window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
   if let Ok(mut transform) = player_query.get_single_mut() {
@@ -56,7 +73,7 @@ pub fn confine_player(
 pub fn player_movement(
   keyboard_input: Res<Input<KeyCode>>,
   time: Res<Time>,
-  mut player_query: Query<&mut Transform, With<CPlayer>>,
+  mut player_query: Query<&mut Transform, With<PuffyTheStarsKiller>>,
 ) {
   // When we are not sure if our entity does'nt exist, we have to make sure that it's ok
   if let Ok(mut transform) = player_query.get_single_mut() {

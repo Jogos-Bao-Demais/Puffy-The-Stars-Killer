@@ -1,31 +1,25 @@
-mod player;
 mod systems;
-mod enemy;
+mod entities;
 
 use bevy::app::App;
 use bevy::prelude::*;
 use bevy::DefaultPlugins;
+use bevy_rapier2d::prelude::*;
 
-use player::PlayerPlugin;
+use entities::player::PuffyTheStarsKillerPlugin;
+use entities::systems::animate_sprite;
 use crate::systems::{exit_game, spawn_camera};
 
-
 fn main()  {
-  const a: i32 = 2;
-  let b: u32 = 10;
-
-  println!("test {} {}", a, b);
-
-
   App::new()
     .add_plugins(DefaultPlugins)
+    .add_plugins(RapierPhysicsPlugin::<()>::default())
+    .add_plugins(RapierDebugRenderPlugin {
+      mode: DebugRenderMode::all(),
+      ..default()
+    })
     .add_systems(Startup, spawn_camera)
-    .add_plugins(PlayerPlugin)
-    .add_systems(Update, exit_game)
+    .add_plugins(PuffyTheStarsKillerPlugin)
+    .add_systems(Update, (exit_game, animate_sprite))
     .run();
-}
-
-fn test_system(test: &str) {
-
-  println!("Test: {}", test.to_string());
 }
