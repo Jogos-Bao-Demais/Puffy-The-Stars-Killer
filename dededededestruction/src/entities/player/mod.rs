@@ -28,7 +28,8 @@ impl Plugin for PuffyTheStarsKillerPlugin {
         .add_systems(Startup, spawn_puffy_stars_killer)
         .add_systems(Update, (
           puffy_the_stars_killer_movement,
-          confine_puffy_the_stars_killer
+          change_puffy_the_stars_killer_animation,
+          confine_puffy_the_stars_killer,
         ));
     }
 }

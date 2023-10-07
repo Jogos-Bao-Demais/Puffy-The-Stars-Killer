@@ -8,33 +8,26 @@ use super::{components::PuffyTheStarsKiller, PLAYER_SPEED, PLAYER_SPRITE_SIZE};
 
 pub fn spawn_puffy_stars_killer(
   mut commands: Commands,
-  mut texture_atlas: ResMut<Assets<TextureAtlas>>,
-  window_query: Query<&Window, With<PrimaryWindow>>,
-  asset_server: Res<AssetServer>,
+  animations: Res<PuffyTheStarsKillerAnimations>,
+  window_query: Query<&Window>,
 ) {
   let window: &Window = window_query.get_single().unwrap();
 
-  let atlas = TextureAtlas::from_grid(
-    asset_server.load("temp/free/Main Characters/Virtual Guy/Idle (32x32).png"),
-    Vec2::splat(32.), // states that our texture is 32 by 32 size
-    11,
-    1,
-    None,
-    None
-  );
+  let Some((texture_atlas, animation)) = animations.get(PuffyTheStarsKillerAnimationsKeys::IDLE) else {
+    error!("Failed to load idle animation");
+
+    return;
+  };
 
   commands.spawn((
     PuffyTheStarsKiller,
     SpriteSheetBundle {
       transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
-      texture_atlas: texture_atlas.add(atlas),
+      texture_atlas,
       sprite: TextureAtlasSprite { index: 0, ..Default::default() },
       ..Default::default() // Set all other field to default
     },
-    SpriteAnimation {
-      len: 11,
-      frame_time: 1./20.
-    },
+    animation,
     FrameTime(0.0)
   ));
 }
@@ -72,31 +65,46 @@ fn flip_puffy_the_stars_killer(mut flip: bool, move_keys: &[KeyCode; 4]) {
 
 pub fn change_puffy_the_stars_killer_animation(
   mut player: Query<
-    (&mut Handle<TextureAtlasSprite>, &mut SpriteAnimation, &mut TextureAtlasSprite),
+    (&mut Handle<TextureAtlas>, &mut SpriteAnimation, &mut TextureAtlasSprite),
     With<PuffyTheStarsKiller>
   >,
-  mut texture_atlas: ResMut<Assets<TextureAtlas>>,
-  asset_server: Res<AssetServer>,
-  mut puffy_animation: ResMut<PuffyTheStarsKillerAnimations>,
+  puffy_the_stars_killer_animations: Res<PuffyTheStarsKillerAnimations>,
   input: Res<Input<KeyCode>>,
 ) {
   let movement_keys = [KeyCode::A, KeyCode::Left, KeyCode::D, KeyCode::Right];
 
   if let Ok((mut atlas, mut animation, mut sprite)) = player.get_single_mut() {
     if input.any_just_pressed(movement_keys) {
+      let Some((new_atlas, new_animation)) = puffy_the_stars_killer_animations.get(PuffyTheStarsKillerAnimationsKeys::RUN) else {
+        error!("No running animation loaded");
 
-      puffy_animation
+        return;
+      };
+
+      *atlas = new_atlas;
+      *animation = new_animation;
+
+      sprite.index = 0;
     }
 
-    if input.any_just_pressed(movement_keys[..=2]) {
+    if input.any_just_pressed([KeyCode::A, KeyCode::Left]) {
       sprite.flip_x = true;
     }
-    else if input.any_just_pressed([3..=4]) {
+    else if input.any_just_pressed([KeyCode::D, KeyCode::Right]) {
       sprite.flip_x = false;
     }
 
     if !input.any_just_released(movement_keys) && !input.any_pressed(movement_keys) {
+      let Some((new_atlas, new_animation)) = puffy_the_stars_killer_animations.get(PuffyTheStarsKillerAnimationsKeys::IDLE) else {
+        error!("No running animation loaded");
 
+        return;
+      };
+
+      *atlas = new_atlas;
+      *animation = new_animation;
+
+      sprite.index = 0;
     }
   }
 

@@ -18,7 +18,7 @@ impl PuffyTheStarsKillerAnimations {
 		return self.animationsMap.insert(key, (handle, animation))
 	}
 
-	pub fn get(&mut self, key: PuffyTheStarsKillerAnimationsKeys) -> Option<(Handle<TextureAtlas>, SpriteAnimation)> {
+	pub fn get(&self, key: PuffyTheStarsKillerAnimationsKeys) -> Option<(Handle<TextureAtlas>, SpriteAnimation)> {
 		return self.animationsMap.get(&key).cloned()
 	}
 }
@@ -26,7 +26,6 @@ impl PuffyTheStarsKillerAnimations {
 impl FromWorld for PuffyTheStarsKillerAnimations {
 	fn from_world(world: &mut World) -> Self {
 		let mut puffy_the_stars_killer_animations = PuffyTheStarsKillerAnimations { animationsMap: HashMap::new() };
-		let mut texture_atlases = world.resource::<Assets<TextureAtlas>>();
 		let asset_server = world.resource::<AssetServer>();
 
 		let idle_atlas = TextureAtlas::from_grid(
@@ -39,7 +38,7 @@ impl FromWorld for PuffyTheStarsKillerAnimations {
 		);
 
 		let run_atlas = TextureAtlas::from_grid(
-			asset_server.load("temp/Free/Main Characters/Virtual Guy/Jump (32x32).png"),
+			asset_server.load("temp/Free/Main Characters/Virtual Guy/Run (32x32).png"),
 			Vec2::splat(32.), // states that our texture is 32 by 32 size
 			12,
 			1,
@@ -47,8 +46,10 @@ impl FromWorld for PuffyTheStarsKillerAnimations {
 			None
 		);
 
-		puffy_the_stars_killer_animations.add(PuffyTheStarsKillerAnimationsKeys::IDLE, texture_atlases.add(idle_atlas), SpriteAnimation { len: 11, frame_time: 1./20. });
-		puffy_the_stars_killer_animations.add(PuffyTheStarsKillerAnimationsKeys::RUN, texture_atlases.add(run_atlas), SpriteAnimation { len: 12, frame_time: 1./20. });
+		let mut texture_atlases = world.resource_mut::<Assets<TextureAtlas>>();
+
+		puffy_the_stars_killer_animations.add(PuffyTheStarsKillerAnimationsKeys::IDLE, texture_atlases.add(idle_atlas), SpriteAnimation { len: 11, frame_time: 1./10. });
+		puffy_the_stars_killer_animations.add(PuffyTheStarsKillerAnimationsKeys::RUN, texture_atlases.add(run_atlas), SpriteAnimation { len: 12, frame_time: 1./10. });
 
 		return puffy_the_stars_killer_animations
 	}
