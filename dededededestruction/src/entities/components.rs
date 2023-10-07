@@ -1,4 +1,4 @@
-use bevy::prelude::Component;
+use bevy::prelude::{Component, Vec2};
 
 #[derive(Component, Clone, Copy)]
 pub struct SpriteAnimation {
@@ -8,3 +8,5 @@ pub struct SpriteAnimation {
 
 #[derive(Component)]
 pub struct FrameTime(pub f32);
+
+pub struct HitBox(pub Vec2);

@@ -1,6 +1,8 @@
+use std::thread::current;
 use bevy::{prelude::*, window::PrimaryWindow};
 
 use crate::entities::components::{FrameTime, SpriteAnimation};
+use crate::entities::player::components::IsGrounded;
 use crate::entities::player::PuffyTheStarsKillerPlugin;
 use crate::entities::player::resources::{PuffyTheStarsKillerAnimations, PuffyTheStarsKillerAnimationsKeys};
 
@@ -59,8 +61,20 @@ pub fn puffy_the_stars_killer_movement(
   return;
 }
 
-fn flip_puffy_the_stars_killer(mut flip: bool, move_keys: &[KeyCode; 4]) {
-  todo!();
+// Review
+fn ground_detection(
+  mut player: Query<(&Transform, &mut IsGrounded), With<PuffyTheStarsKiller>>,
+  mut last: Local<Transform>, // May only be accessed by the system itself
+) {
+  if let Ok((position, mut on_ground)) = player.get_single_mut() {
+    let current = if position.translation.y == last.translation.y { true } else { false };
+
+    if current != on_ground.0 {
+      on_ground.0 = current
+    }
+
+    *last = *position;
+  }
 }
 
 pub fn change_puffy_the_stars_killer_animation(
