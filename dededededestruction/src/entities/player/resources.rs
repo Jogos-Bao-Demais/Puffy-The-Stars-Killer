@@ -10,22 +10,22 @@ pub enum PuffyTheStarsKillerAnimationsKeys {
 
 #[derive(Resource)]
 pub struct PuffyTheStarsKillerAnimations {
-	animationsMap: HashMap<PuffyTheStarsKillerAnimationsKeys, (Handle<TextureAtlas>, SpriteAnimation)>
+	animations_map: HashMap<PuffyTheStarsKillerAnimationsKeys, (Handle<TextureAtlas>, SpriteAnimation)>
 }
 
 impl PuffyTheStarsKillerAnimations {
 	pub fn add(&mut self, key: PuffyTheStarsKillerAnimationsKeys, handle: Handle<TextureAtlas>, animation: SpriteAnimation) -> Option<(Handle<TextureAtlas>, SpriteAnimation)> {
-		return self.animationsMap.insert(key, (handle, animation))
+		return self.animations_map.insert(key, (handle, animation))
 	}
 
 	pub fn get(&self, key: PuffyTheStarsKillerAnimationsKeys) -> Option<(Handle<TextureAtlas>, SpriteAnimation)> {
-		return self.animationsMap.get(&key).cloned()
+		return self.animations_map.get(&key).cloned()
 	}
 }
 
 impl FromWorld for PuffyTheStarsKillerAnimations {
 	fn from_world(world: &mut World) -> Self {
-		let mut puffy_the_stars_killer_animations = PuffyTheStarsKillerAnimations { animationsMap: HashMap::new() };
+		let mut puffy_the_stars_killer_animations = PuffyTheStarsKillerAnimations { animations_map: HashMap::new() };
 		let asset_server = world.resource::<AssetServer>();
 
 		let idle_atlas = TextureAtlas::from_grid(
